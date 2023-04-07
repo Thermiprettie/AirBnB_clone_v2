@@ -1,22 +1,20 @@
 #!/usr/bin/python3
-# Fabric script that distributes an archive to your web servers,
-# using the function do_deploy
-# based on 1-pack_web_static.py file
+"""
+Fabric script that distributes an archive to your web servers,
+using the function do_deploy
+based on 1-pack_web_static.py file
+"""
 from fabric.api import *
-import os
-from datetime import datetime
-
-env.hosts = ['localhost']
+import time
+from datetime import date
 
 
 def do_pack():
+    timestamp = time.strftime("%Y%m%d%H%M%S")
     try:
-        filepath = "versions/web_static_" + datetime.now().\
-                   strftime("%Y%m%d%H%M%S") + ".tgz"
         local("mkdir -p versions")
-        local("tar -zcvf versions/web_static_$(date +%Y%m%d%H%M%S).tgz\
-        web_static")
-        print("web_static packed: {} -> {}".
-              format(filepath, os.path.getsize(filepath)))
+        local("tar -cvzf versions/web_static_{:s}.tgz web_static/".
+              format(timestamp))
+        return ("versions/web_static_{:s}.tgz".format(timestamp))
     except:
         return None
